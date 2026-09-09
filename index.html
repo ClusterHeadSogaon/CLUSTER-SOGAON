@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0d47a1">
+<link rel="manifest" href="manifest.json">
+<title>सोगाव केंद्र</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#222}
+.header{background:linear-gradient(135deg,#1769aa,#0d47a1);color:#fff;text-align:center;padding:28px 15px;border-radius:0 0 25px 25px}
+.header h1{margin:0;font-size:28px}.header p{margin:8px 0 0}.editBtn{margin-top:16px;padding:10px 16px;border:0;border-radius:9px;background:#fff;color:#1769aa;font-weight:bold}
+.container,#editor{max-width:500px;margin:24px auto;padding:15px}.card,#editor{background:#fff;border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 4px 12px #0000001a}
+.card h2{margin-top:0;font-size:19px}.button{display:block;width:100%;padding:17px;margin-top:12px;border-radius:12px;text-decoration:none;color:#fff;font-size:18px;font-weight:bold;text-align:center}
+.sheet{background:#188038}.tracker{background:#7b1fa2}.analysis{background:#e65100}.notice{background:#f9a825;color:#222}
+#editor{display:none}.editorTitle{margin-top:0}label{display:block;font-weight:bold;margin-top:13px}input{width:100%;padding:10px;margin-top:5px;border:1px solid #bbb;border-radius:8px;font-size:15px}
+.save,.close{padding:12px 17px;border:0;border-radius:9px;font-weight:bold;margin-top:17px}.save{background:#188038;color:#fff}.close{background:#ddd}
+.footer{text-align:center;padding:20px;color:#666;font-size:14px}
+</style>
+</head>
+<body>
+<div class="header">
+<h1 id="siteTitle">🏫 सोगाव केंद्र</h1><p id="siteSubtitle">डिजिटल कार्य व्यवस्थापन पोर्टल</p>
+<button class="editBtn" onclick="requestEdit()">⚙️ Admin / Edit</button>
+</div>
+
+<div id="editor">
+<h2 class="editorTitle">🔐 Admin Edit Mode</h2>
+<label>केंद्राचे नाव</label><input id="titleInput">
+<label>उपशीर्षक</label><input id="subtitleInput">
+<label>Google Sheet बटन</label><input id="sheetNameInput">
+<label>Google Sheet लिंक</label><input id="sheetLinkInput">
+<label>Cluster Work Tracker बटन</label><input id="trackerNameInput">
+<label>Cluster Work Tracker लिंक</label><input id="trackerLinkInput">
+<label>Analysis बटन</label><input id="analysisNameInput">
+<label>Analysis लिंक</label><input id="analysisLinkInput">
+<label>सूचना बटन</label><input id="noticeNameInput">
+<label>सूचना लिंक</label><input id="noticeLinkInput">
+<button class="save" onclick="saveChanges()">💾 Save Changes</button>
+<button class="close" onclick="closeEditor()">✖ Close</button>
+</div>
+
+<div class="container">
+<div class="card"><h2>📊 कामकाज व्यवस्थापन</h2><a id="sheetButton" class="button sheet" target="_blank">📊 Google Sheet उघडा</a></div>
+<div class="card"><h2>📝 माहिती संकलन</h2><a id="trackerButton" class="button tracker" target="_blank">📋 Cluster Work Tracker</a></div>
+<div class="card"><h2>📈 कामकाजाचे विश्लेषण</h2><a id="analysisButton" class="button analysis" target="_blank">📈 Analysis पहा</a></div>
+<div class="card"><h2>📢 सूचना</h2><a id="noticeButton" class="button notice" target="_blank">📢 महत्त्वाच्या सूचना</a></div>
+</div>
+<div class="footer">केंद्रप्रमुख – सोगाव केंद्र<br>तालुका – शहापूर | जिल्हा – ठाणे</div>
+
+<script>
+const EDIT_PASSWORD="Dash@4343";
+const defaults={
+title:"🏫 सोगाव केंद्र",subtitle:"डिजिटल कार्य व्यवस्थापन पोर्टल",
+sheetName:"📊 Google Sheet उघडा",
+sheetLink:"https://docs.google.com/spreadsheets/d/1cAlQZd6mnD6bfMNydDfuUgCPZql_yp9y-kD4fqx7Fi8/edit?usp=drivesdk",
+trackerName:"📋 Cluster Work Tracker",trackerLink:"",
+analysisName:"📈 Analysis पहा",analysisLink:"",
+noticeName:"📢 महत्त्वाच्या सूचना",noticeLink:""
+};
+function data(){try{return Object.assign({},defaults,JSON.parse(localStorage.getItem("sogavPWA")||"{}"))}catch(e){return defaults}}
+function apply(){let d=data();siteTitle.innerHTML=d.title;siteSubtitle.innerHTML=d.subtitle;
+sheetButton.innerHTML=d.sheetName;sheetButton.href=d.sheetLink||"#";
+trackerButton.innerHTML=d.trackerName;trackerButton.href=d.trackerLink||"#";
+analysisButton.innerHTML=d.analysisName;analysisButton.href=d.analysisLink||"#";
+noticeButton.innerHTML=d.noticeName;noticeButton.href=d.noticeLink||"#"}
+function requestEdit(){let p=prompt("🔐 Admin Edit Mode पासवर्ड:");if(p===EDIT_PASSWORD)openEditor();else if(p!==null)alert("❌ चुकीचा पासवर्ड!")}
+function openEditor(){let d=data();["title","subtitle","sheetName","sheetLink","trackerName","trackerLink","analysisName","analysisLink","noticeName","noticeLink"].forEach(k=>document.getElementById(k+"Input").value=d[k]||"");editor.style.display="block";editor.scrollIntoView({behavior:"smooth"})}
+function saveChanges(){let d={};["title","subtitle","sheetName","sheetLink","trackerName","trackerLink","analysisName","analysisLink","noticeName","noticeLink"].forEach(k=>d[k]=document.getElementById(k+"Input").value);localStorage.setItem("sogavPWA",JSON.stringify(d));apply();editor.style.display="none";alert("✅ बदल सेव्ह झाले!")}
+function closeEditor(){editor.style.display="none"} apply();
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
+</script>
+</body>
+</html>
