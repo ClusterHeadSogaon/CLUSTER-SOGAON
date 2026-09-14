@@ -18,7 +18,7 @@ body { margin: 0; font-family: Arial, sans-serif; background: #f4f7fb; color: #2
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* लोगोचे आकर्षक डिझाईन */
+/* लोगोचे डिझाईन */
 .portal-logo {
   width: 90px;
   height: 90px;
@@ -31,7 +31,7 @@ body { margin: 0; font-family: Arial, sans-serif; background: #f4f7fb; color: #2
   transition: transform 0.3s ease;
 }
 .portal-logo:hover {
-  transform: scale(1.05); /* माऊस नेल्यावर थोडा मोठा दिसेल */
+  transform: scale(1.05);
 }
 
 .header h1 { margin: 5px 0 0; font-size: 26px; }
@@ -85,10 +85,12 @@ body { margin: 0; font-family: Arial, sans-serif; background: #f4f7fb; color: #2
   box-shadow: 0 5px 12px rgba(0,0,0,0.2);
 }
 
+/* बटणांचे विविध रंग */
 .sheet { background: #188038; }
 .form { background: #7b1fa2; }
 .analysis { background: #e65100; }
 .notice { background: #f9a825; color: #222; }
+.extra { background: #00838f; } /* ५ व्या बटणाचा Teal रंग */
 
 /* फुटर */
 .footer { text-align: center; padding: 25px 15px; color: #666; font-size: 14px; line-height: 1.5; }
@@ -127,7 +129,6 @@ input { width: 100%; padding: 11px; margin-top: 6px; border: 1px solid #ccc; bor
 
 <!-- हेडर विभाग (लोगो आणि शीर्षक) -->
 <div class="header">
-  <!-- लोगो इमेज (तुमच्या लोगो फाइलचे नाव logo.png असावे) -->
   <img src="logo.png" alt="सोगाव केंद्र लोगो" class="portal-logo" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/2602/2602414.png';">
   
   <h1 id="siteTitle">🏫 सोगाव केंद्र</h1>
@@ -142,14 +143,23 @@ input { width: 100%; padding: 11px; margin-top: 6px; border: 1px solid #ccc; bor
 
   <label>केंद्राचे नाव</label><input id="titleInput">
   <label>उपशीर्षक</label><input id="subtitleInput">
+  
   <label>Google Sheet बटनाचे नाव</label><input id="sheetNameInput">
   <label>Google Sheet लिंक</label><input id="sheetLinkInput">
+  
   <label>Cluster Work Tracker बटनाचे नाव</label><input id="trackerNameInput">
   <label>Cluster Work Tracker लिंक</label><input id="trackerLinkInput">
+  
   <label>Analysis बटनाचे नाव</label><input id="analysisNameInput">
   <label>Analysis लिंक</label><input id="analysisLinkInput">
+  
   <label>सूचना बटनाचे नाव</label><input id="noticeNameInput">
   <label>सूचना लिंक</label><input id="noticeLinkInput">
+  
+  <!-- ५ वे नवीन बटण (Edit Mode मध्ये जोडले) -->
+  <label>५ व्या बटनाचे नाव (नवीन उपक्रम/फॉर्म)</label><input id="extraNameInput">
+  <label>५ व्या बटनाची लिंक</label><input id="extraLinkInput">
+  
   <label>Footer मध्ये दाखवायचे नाव</label><input id="footerNameInput">
 
   <button class="saveBtn" onclick="saveChanges()">💾 Save Changes</button>
@@ -177,6 +187,12 @@ input { width: 100%; padding: 11px; margin-top: 6px; border: 1px solid #ccc; bor
     <h2>📢 सूचना</h2>
     <a id="noticeButton" class="button notice" target="_blank">📢 महत्त्वाच्या सूचना</a>
   </div>
+
+  <!-- ५ वे नवीन बटण कार्ड -->
+  <div class="card">
+    <h2>✨ नवीन उपक्रम / लिंक</h2>
+    <a id="extraButton" class="button extra" target="_blank">🔗 नवीन लिंक उघडा</a>
+  </div>
 </div>
 
 <!-- फुटर विभाग -->
@@ -198,6 +214,8 @@ const defaults={
   analysisLink:"",
   noticeName:"📢 महत्त्वाच्या सूचना",
   noticeLink:"",
+  extraName:"🔗 नवीन उपक्रम / लिंक",
+  extraLink:"",
   footerName:"केंद्रप्रमुख – सोगाव केंद्र<br>तालुका – शहापूर | जिल्हा – ठाणे"
 };
 
@@ -210,14 +228,23 @@ function applyData(){
   const d=getData();
   document.getElementById("siteTitle").innerHTML=d.title;
   document.getElementById("siteSubtitle").innerHTML=d.subtitle;
+  
   document.getElementById("sheetButton").innerHTML=d.sheetName;
   document.getElementById("sheetButton").href=d.sheetLink||"#";
+  
   document.getElementById("trackerButton").innerHTML=d.trackerName;
   document.getElementById("trackerButton").href=d.trackerLink||"#";
+  
   document.getElementById("analysisButton").innerHTML=d.analysisName;
   document.getElementById("analysisButton").href=d.analysisLink||"#";
+  
   document.getElementById("noticeButton").innerHTML=d.noticeName;
   document.getElementById("noticeButton").href=d.noticeLink||"#";
+  
+  /* ५ व्या बटणाची माहिती लागू करणे */
+  document.getElementById("extraButton").innerHTML=d.extraName;
+  document.getElementById("extraButton").href=d.extraLink||"#";
+  
   document.getElementById("footerName").innerHTML=d.footerName;
 }
 
@@ -229,14 +256,14 @@ function requestEdit(){
 
 function openEditor(){
   const d=getData();
-  const ids=["title","subtitle","sheetName","sheetLink","trackerName","trackerLink","analysisName","analysisLink","noticeName","noticeLink","footerName"];
+  const ids=["title","subtitle","sheetName","sheetLink","trackerName","trackerLink","analysisName","analysisLink","noticeName","noticeLink","extraName","extraLink","footerName"];
   ids.forEach(k=>document.getElementById(k+"Input").value=d[k]);
   document.getElementById("editor").style.display="block";
   window.scrollTo({top:document.getElementById("editor").offsetTop-10,behavior:"smooth"});
 }
 
 function saveChanges(){
-  const ids=["title","subtitle","sheetName","sheetLink","trackerName","trackerLink","analysisName","analysisLink","noticeName","noticeLink","footerName"];
+  const ids=["title","subtitle","sheetName","sheetLink","trackerName","trackerLink","analysisName","analysisLink","noticeName","noticeLink","extraName","extraLink","footerName"];
   const d={};
   ids.forEach(k=>d[k]=document.getElementById(k+"Input").value);
   localStorage.setItem("sogavPortalData",JSON.stringify(d));
