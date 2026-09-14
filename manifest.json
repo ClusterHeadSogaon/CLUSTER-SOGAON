@@ -1,0 +1,22 @@
+{
+  "name": "सोगाव केंद्र डिजिटल पोर्टल",
+  "short_name": "सोगाव केंद्र",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1769aa",
+  "theme_color": "#1769aa",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
